@@ -7,38 +7,21 @@ int main() {
 	cout.tie(0);
 	cin.tie(0);
 	int cnt;
-	cin >> cnt;
-	while (cnt--) {
-		queue<int> q;
-		string str;
-		cin >> str;
-		int open = 0;
-		int close = 0;
-		bool check = true;
-		for (int i = 0; i < str.length(); i++) {
-			if (str[i] == '(') {
-				q.push(str.at(i));
-				open++;
-			}
-			else {
-				close++;
-				if (q.empty()||q.front() == str.at(i)||close>open) {
-					cout << "NO\n";
-					check = false;
-					break;
-				}
-				else {
-					q.push(str.at(i));
-				}
-
-			}
+	int K;
+	cin >> cnt >> K;
+	queue<int>q;
+	for (int i = 0; i < cnt; i++)
+		q.push(i + 1);
+	cout << "<";
+	while (!q.empty()) {
+		for (int i = 0; i < K - 1; i++) {
+			int x = q.front();
+			q.pop();
+			q.push(x);
 		}
-		if (check) {
-			if (open == close) {
-				cout << "YES\n";
-			}
-			else cout << "NO\n";
-		}
+		if (q.size() == 1)cout << q.front();
+		else cout << q.front() << ", ";
+		q.pop();
 	}
-
+	cout << ">";
 }
