@@ -1,59 +1,41 @@
 #include<iostream>
-#include<queue>
 #include<vector>
-
 using namespace std;
-int N,M;
-vector<int> a[101];
-int rs[101][101];
-queue<int> q;
-void bfs(int start){
-    int v[101]={0,};
-    q.push(start);
-    v[start]=1;
-    while(!q.empty()){
-        int x=q.front();
-        q.pop();
-        for(int i=0;i<a[x].size();i++){
-            int idx = a[x][i];
-            if(v[idx]==0){
-                v[idx]=1;
-                q.push(idx);
-                rs[idx][start]=rs[x][start]+1;
-                rs[start][idx]=rs[start][x]+1;
-            }
 
-        }
+vector<pair<int,int> > tree[10001];
+int n;
+int end_point;
+int ans,total;
+bool visited[100001];
+void dfs(int cur,int cur_total){
+    if(visited[cur])return;
+    visited[cur]=true;
+    if(cur_total>total){
+        end_point=cur;
+        total=cur_total;
+    }
+    for(int i=0;i<tree[cur].size();i++){
+        dfs(tree[cur][i].first,cur_total+tree[cur][i].second);
     }
 }
+void Input(){
+    for(int i=1;i<n;i++){
+        int start,end,cost;
+        tree[start].push_back(make_pair(end,cost));
+        tree[end].push_back(make_pair(start,cost));
+    }
+}
+void Init(){
+    for(int i=0;i<100001;i++)
+        visited[i]=false;
+    }
 int main(){
-    cin>>N>>M;
-    for(int i=0;i<M;i++){
-        int x,y;
-        cin>>x>>y;
-        a[x].push_back(y);
-        a[y].push_back(x);
-    }
-
-    for(int i=1;i<=N;i++){
-        for(int j=1;j<=N;j++){
-            rs[i][j]=0;
-        }
-    }
-    for(int i=1;i<=N;i++)
-        bfs(i);
-    int sum=0;
-    int result=0;
-    int min = 987654321;
-    for(int i=1;i<=N;i++){
-        sum=0;
-        for(int j=1;j<=N;j++){
-            sum+=rs[i][j];
-        }
-        if(min>sum){
-            min=sum;
-            result=i;
-        }
-    }
-    cout<<result<<"\n";
+    ios::sync_with_stdio(false);
+    cin.tie(NULL);
+    cout.tie(NULL);
+    Input();
+    dfs(1,0);
+    Init();
+    dfs(end_point,0);
+    cout<<total<<endl;
 }
