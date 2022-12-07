@@ -1,39 +1,51 @@
-#include <iostream>
-#include <vector>
-
-#define mod 1000000000
+#include<vector>
+#include<iostream>
+#include<string>
+#include<algorithm>
+#include<queue>
 using namespace std;
 
-int dp[101][10] = {
-    0,
-};
-int main()
-{
-    int n;
-    cin >> n;
+long long dp[1<<10][101][10];
 
-    for (int i = 1; i < 10; i++) {
-        dp[1][i] = 1;
-    }
+int main() {
+	ios::sync_with_stdio(false);
+	cin.tie(NULL);
 
-    for (int i = 2; i <= n; i++) {
-        for (int j = 0; j < 10; j++) {
-            if (j == 0)
-                dp[i][0] = dp[i - 1][j + 1];
-            else if (j == 9)
-                dp[i][9] = dp[i - 1][j - 1];
-            else
-                dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j + 1];
+	int n; cin >> n;
 
-            dp[i][j] %= mod;
-        }
-    }
+	if (n <= 9) {
+		cout << 0 << endl;
+		return 0;
+	}
 
-    int result = 0;
-    for (int i = 0; i < 10; i++) {
-        result = (result + dp[n][i]) % mod;
-    }
-    cout << result << "\n";
+	for (int i = 1; i <= 9; i++) {
+		dp[1<<i][1][i] = 1;
+	}
+	//(int)10e8;
+	for (int i = 2; i <= n; i++) { // i는 숫자 갯수
+		for (int k = 0; k <= 9; k++) { // k는 마지막 숫자 번호
+			for (int bit = 0; bit < (1 << 10); bit++) { // bit는 이전 비트
+				if (k == 0) {
+					dp[bit | (1 << k)][i][k] += dp[bit][i - 1][k+1] % (int)10e8;
+				}
+				else if (k == 9) {
+					dp[bit | (1 << k)][i][k] += dp[bit][i - 1][k - 1] % (int)10e8;
+				}
+				else {
+					dp[bit | (1 << k)][i][k] += (dp[bit][i - 1][k + 1] + dp[bit][i - 1][k - 1]) % (int)10e8;
+				}
+			}
+		}
+	}
 
-    return 0;
+	long long answer = 0;
+
+	for (int i = 0; i <= 9; i++) {
+		answer = (answer + dp[(1<<10) - 1][n][i]) % (int)10e8;
+	}
+
+	cout << answer << endl;
+
+	
+	return 0;
 }
